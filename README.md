@@ -51,10 +51,10 @@ root/
 │    transaction_date (datetime)       │
 │    transaction_time (time)           │
 │    transaction_qty (int)             │
-│ FK store_id (int) ───────────────────┤
-│ FK product_id (int) ─────────────┐   │
-│    unit_price (float)            │   │
-└──────────────────────────────────┼───┘
+│ FK store_id (int)                    │
+│ FK product_id (int)                  │
+│    unit_price (float)                │
+└──────────────────────────────────┬───┘
                                    │
                                    │ N:1
                                    │
