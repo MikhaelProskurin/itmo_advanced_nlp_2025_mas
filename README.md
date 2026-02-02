@@ -29,6 +29,70 @@ root/
 └── README.md
 ```
 
+### Database
+
+```
+           ┌──────────────────────────┐
+           │      stores_t            │
+           │──────────────────────────│
+           │ PK store_id (int)        │
+           │    store_name (str)      │
+           │    city (str)            │
+           │    address (str)         │
+           │    manager (str)         │
+           └──────────┬───────────────┘
+                      │
+                      │ 1:N
+                      │
+┌─────────────────────▼────────────────┐
+│        transactions_t                │
+│──────────────────────────────────────│
+│ PK transaction_id (int)              │
+│    transaction_date (datetime)       │
+│    transaction_time (time)           │
+│    transaction_qty (int)             │
+│ FK store_id (int) ───────────────────┤
+│ FK product_id (int) ─────────────┐   │
+│    unit_price (float)            │   │
+└──────────────────────────────────┼───┘
+                                   │
+                                   │ N:1
+                                   │
+                      ┌────────────▼────────────┐
+                      │      products_t         │
+                      │─────────────────────────│
+                      │ PK product_id (int)     │
+                      │    product_name (str)   │
+                      └──────────┬──────────────┘
+                                 │
+                                 │ 1:1
+                                 │
+                      ┌──────────▼──────────────┐
+                      │     nutritions_t        │
+                      │─────────────────────────│
+                      │ PK product_id (int)     │
+                      │    calories (int)       │
+                      │    fat (int)            │
+                      │    carb (int)           │
+                      │    fiber (int)          │
+                      │    sodium (int)         │
+                      └─────────────────────────┘
+
+
+┌──────────────────────────────────────┐
+│  service__session_tracing_t          │
+│──────────────────────────────────────│
+│ PK session_id (uuid)                 │
+│    session_history (array[json])     │
+└──────────────────────────────────────┘
+```
+
+**Основные связи:**
+- `transactions_t.store_id` → `stores_t.store_id` (N:1)
+- `transactions_t.product_id` → `products_t.product_id` (N:1)
+- `nutritions_t.product_id` → `products_t.product_id` (1:1)
+
+
 ### Agents
 
 Система состоит из пяти специализированных агентов, координируемых через LangGraph:
