@@ -12,8 +12,11 @@ from dotenv import load_dotenv, find_dotenv
 
 from langchain_openai import ChatOpenAI
 
-from database.schemas import meta
 from database.manager import PostgresAlchemyManager
+from database.schemas import (
+    meta,
+    SessionTracing
+)
 from agent.mas import (
     CoffeeShopAnalystAsistant,
     provide_agentic_session
@@ -42,7 +45,8 @@ async def main():
         fallback_temperature=0.3
     )
 
-    await provide_agentic_session(agent=agent)
+    trace: SessionTracing = await provide_agentic_session(agent=agent)
+    print(database_manager.to_dict(trace))
 
 if __name__ == "__main__":
     asyncio.run(main())

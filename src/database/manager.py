@@ -7,8 +7,7 @@ SQL execution, CSV data import, and ORM object persistence.
 
 import pandas as pd
 
-from typing import Sequence
-
+from typing import Sequence, Literal, Any
 from sqlalchemy import (
     text,
     create_engine,
@@ -56,6 +55,15 @@ class PostgresAlchemyManager:
         """
         return self.meta.sorted_tables
 
+    @staticmethod
+    def to_dict(orm_model: DeclarativeBase) -> dict[str, Any]:
+        """Convert an ORM model instance to a dictionary.
+
+        Returns:
+            Dictionary representation of the ORM model instance.
+        """
+        return {c.name: getattr(orm_model, c.name) for c in orm_model.__table__.columns}
+
     async def create_database_structure(self) -> None:
         """Create all database tables defined in metadata."""
         async with self.engine.begin() as conn:
@@ -79,13 +87,20 @@ class PostgresAlchemyManager:
             result = await s.execute(text(sql))
             return result.fetchall()
 
-    def copy_from_csv(self, csv_path: str, table: str, chunksize: int = 10000) -> None:
+    def copy_from_csv(
+        self,
+        csv_path: str,
+        table: str,
+        chunksize: int = 10000,
+        mode: Literal["append", "replace"] = "append"
+    ) -> None:
         """Load CSV data into database table.
 
         Args:
             csv_path: Path to CSV file.
             table: Target table name.
             chunksize: Number of rows per batch insert.
+            mode: Append or replace existing data.
         """
         dataframe: pd.DataFrame = pd.read_csv(csv_path)
 
@@ -93,7 +108,7 @@ class PostgresAlchemyManager:
             dataframe.to_sql(
                 name=table,
                 con=conn,
-                if_exists="fail",
+                if_exists=mode,
                 index=False,
                 chunksize=chunksize
             )
