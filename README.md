@@ -144,7 +144,7 @@ root/
 ### Installation
 1.  Клонируйте репозиторий:
     ```bash
-    git clone https://github.com/MikhaelProskurin/itmo_advanced_nlp_2025.git
+    git clone https://github.com/MikhaelProskurin/itmo_advanced_nlp_2025_mas.git
     cd <your_directory>
     ```
 
