@@ -2,9 +2,9 @@
 .idea
 .git
 .Dockerfile
-**/.env
-**/__pycache__
 docker-compose.yaml
 pyrightconfig.json
+**/.env
+**/__pycache__
 /*data
 /*volume

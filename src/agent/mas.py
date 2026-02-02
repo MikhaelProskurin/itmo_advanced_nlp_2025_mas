@@ -6,7 +6,6 @@ insight generator, answer summarizer) to handle analytical queries about
 coffee shop operations and database.
 """
 
-import os
 import uuid
 from typing import Literal
 
@@ -114,11 +113,11 @@ class CoffeeShopAnalystAsistant:
 
         if history and state["routing_decision"] == history[-1]:
             return "answer_summarizer"
-        
+
         print(f"Routing decision: {state['routing_decision']}")
-        
+
         return state["routing_decision"]
-    
+
     async def simple_qa_node(self, state: MultiAgentWorkflow) -> MultiAgentWorkflow:
         """Answers questions that are too simple or behind the system's scope."""
 
@@ -176,7 +175,6 @@ class CoffeeShopAnalystAsistant:
             ("system", "{agent_propmpt}"),
             ("human", "{request}")
         ])
-
         response: SQLWriterOutput = await with_fallback(
             node_prompt | self.llm | parser,
             node_prompt | self.fallback_llm | parser,
@@ -205,7 +203,7 @@ class CoffeeShopAnalystAsistant:
         ])
 
         if path := state.get("user_data_file"):
-            
+
             user_provided_data = self.tools["read_provided_data"].invoke({"path": path})
             node_prompt.append(("ai", f"User provided data: {user_provided_data}"))
 
@@ -263,7 +261,7 @@ class CoffeeShopAnalystAsistant:
         return update
 
 
-async def provide_agentic_session(agent: CoffeeShopAnalystAsistant, stopword: str = "/stop_conversation") -> None:
+async def provide_agentic_session(agent: CoffeeShopAnalystAsistant, stopword: str = "/stop_conversation") -> SessionTracing:
     """Run interactive session with the coffee shop analyst agent.
 
     Args:
@@ -297,3 +295,4 @@ async def provide_agentic_session(agent: CoffeeShopAnalystAsistant, stopword: st
     await agent.database_manager.dump_object(session_trace)
 
     print("Session trace dumped successfully!")
+    return session_trace

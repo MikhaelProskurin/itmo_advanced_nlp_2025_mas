@@ -8,7 +8,7 @@ and session tracing with full schema documentation.
 import uuid
 from datetime import datetime, time
 
-from sqlalchemy import Integer, UUID, JSON
+from sqlalchemy import Integer, UUID, JSON, ARRAY
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -138,8 +138,8 @@ class SessionTracing(Base):
         primary_key=True,
         comment="Unique identifier for each session"
     )
-    session_history: Mapped[dict] = mapped_column(
-        JSON,
+    session_history: Mapped[list[dict]] = mapped_column(
+        ARRAY(JSON),
         comment="History of the session"
     )
 
