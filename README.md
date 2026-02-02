@@ -92,7 +92,15 @@ root/
 3.  Настройте переменные окружения и инфраструктуру (при необходимости):
     *   Создайте файл ```.env```.
     *   Заполните необходимые ключи (LLM_API_KEY, BASE_URL, WEATHER_API_KEY) в созданном ```.env``` файле. 
-    *   Разверните инфраструктуру (PostgreSQL instance, etc.)
+    *   Разверните инфраструктуру (PostgreSQL instance, etc.).
+
+    Команда запуска сервисов
+
+    ```bash
+    docker-compose up -d --build
+    ```
+
+    Переменные окружения:
 
     ```python
     LLM_API_KEY=... # (typical api-key for llm access)
