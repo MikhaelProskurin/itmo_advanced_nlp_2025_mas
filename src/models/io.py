@@ -18,7 +18,7 @@ class TechnicalMixin(BaseModel):
 class RouterOutput(TechnicalMixin):
     """Router agent output with routing decision and plan."""
 
-    routing_decision: Literal["sql_writer", "data_refiner", "insight_generator", "answer_summarizer", "general_question"]
+    routing_decision: Literal["sql_writer", "insight_generator", "answer_summarizer", "general_question"]
     routing_plan: Optional[str] = Field(description="The step-by-step plan of agent calls to solve the problem.")
     user_data_file: Optional[str] = Field(description="The data file path on the operating system user requests to analyze.")
 

@@ -157,7 +157,7 @@ class CoffeeShopAnalystAsistant:
         update = {
             "routing_decision": response.routing_decision,
             "routing_plan": response.routing_plan,
-            "user_provided_path": response.user_data_path,
+            "user_data_file": response.user_data_file,
             "reasoning_traces": [{"reasoning": response.reasoning, "failure_reason": response.failure_reason}]
         }
         return update
@@ -212,10 +212,14 @@ class CoffeeShopAnalystAsistant:
             node_prompt | self.fallback_llm | parser,
             {"agent_propmpt": agent_prompt, "request": state["request"]
         })
+        update = {
+            "insights": response.insights,
+            "interactions_history": state.get("interactions_history", []) + ["insight_generator"],
+            "reasoning_traces": [{"reasoning": response.reasoning, "failure_reason": response.failure_reason}]
+        }
 
         if response.sql and not path:
             queried_data = await self.tools["search_postgres_database"].ainvoke({"statement": response.sql})
-
             node_prompt.append(("ai", f"Extracted data: {queried_data}"))
 
             response: InsightGeneratorOutput = await with_fallback(
@@ -223,13 +227,11 @@ class CoffeeShopAnalystAsistant:
                 node_prompt | self.fallback_llm | parser,
                 {"agent_propmpt": agent_prompt, "request": state["request"]
             })
-
-        update = {
-            "queried_data": queried_data,
-            "insights": response.insights,
-            "interactions_history": state.get("interactions_history", []) + ["insight_generator"],
-            "reasoning_traces": [{"reasoning": response.reasoning, "failure_reason": response.failure_reason}]
-        }
+            update |= {
+                "queried_data": queried_data,
+                "insights": response.insights,
+                "reasoning_traces": [{"reasoning": response.reasoning, "failure_reason": response.failure_reason}]
+            }
         return update
 
     async def answer_summarizer_node(self, state: MultiAgentWorkflow) -> MultiAgentWorkflow:
