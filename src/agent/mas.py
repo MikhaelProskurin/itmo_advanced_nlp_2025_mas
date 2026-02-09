@@ -219,6 +219,7 @@ class CoffeeShopAnalystAsistant:
         }
 
         if response.sql and not path:
+
             queried_data = await self.tools["search_postgres_database"].ainvoke({"statement": response.sql})
             node_prompt.append(("ai", f"Extracted data: {queried_data}"))
 
@@ -232,6 +233,7 @@ class CoffeeShopAnalystAsistant:
                 "insights": response.insights,
                 "reasoning_traces": [{"reasoning": response.reasoning, "failure_reason": response.failure_reason}]
             }
+
         return update
 
     async def answer_summarizer_node(self, state: MultiAgentWorkflow) -> MultiAgentWorkflow:
